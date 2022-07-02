@@ -5,6 +5,8 @@ require('dotenv').config()
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 5000
 const jwt = require('jsonwebtoken');
+const { query } = require('express');
+const stripe = require("stripe")('sk_test_51L1nmNCGpaTt0RU81oq26j6Ta7gwb9pGlOOwxjeXAQgefsXMvmRxFUopKE2St6GDbDpxjUug0KxRyqzL6oKarPcR00lqLjh70r')
 // middle ware 
 app.use(cors())
 app.use(express.json())
@@ -37,6 +39,22 @@ async function run(){
             const serviceCollection = client.db("Luxury-Leving").collection("service");
             const reviewCollection = client.db("Luxury-Leving").collection("review");
             const userCollection = client.db("Luxury-Leving").collection("user");
+            const orderCollection = client.db("Luxury-Leving").collection("order");
+
+                 // create payment maythod 
+                 app.post('/create-payment-intent', async (req, res) => {
+                  const service = req.body
+                  console.log(service);
+                  const price = service.price
+                  const amount = price * 100
+
+                  const paymentIntent = await stripe.paymentIntents.create({
+                        amount: amount,
+                        currency: "usd",
+                        payment_method_types: ['card']
+                  });
+                  res.send({ clientSecret: paymentIntent.client_secret })
+            })
            
             //  service section --------
             // read service data 
@@ -44,6 +62,22 @@ async function run(){
                   const query = {}
                   const service = await serviceCollection.find(query).toArray()
                   res.send(service)
+            })
+
+
+            // order api 
+            app.post('/order' , async (req , res ) =>{
+                  const order = req.body
+                  const submit = await orderCollection.insertOne(order)
+                  res.send({message: "Your order Successfull!"})
+            })
+
+            app.get('/order/:email' , async (req , res) => {
+                  const email = req.params.email
+                  const query = {email : email}
+                  const order = await orderCollection.find(query).toArray()
+                  res.send(order)
+
             })
 
 
