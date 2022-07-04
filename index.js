@@ -18,7 +18,7 @@ const uri = `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@admin.gtj
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
-// verifay jwt token 
+// verifay jwt token ------------------
  function verifayJwtToken(req , res , next ){
       const authHeader = req.headers.authorization
       if(!authHeader){
