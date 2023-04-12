@@ -8,7 +8,9 @@ const jwt = require('jsonwebtoken');
 const { query } = require('express');
 const stripe = require("stripe")('sk_test_51L1nmNCGpaTt0RU81oq26j6Ta7gwb9pGlOOwxjeXAQgefsXMvmRxFUopKE2St6GDbDpxjUug0KxRyqzL6oKarPcR00lqLjh70r')
 // middle ware 
-app.use(cors())
+app.use(cors({
+      origin: "*"
+}))
 app.use(express.json())
 
 
